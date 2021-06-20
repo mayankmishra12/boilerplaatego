@@ -3,8 +3,9 @@ package controller
 import "usermvc/service"
 
 type controller struct {
-	userSvc  service.UserService
+	userSvc service.UserService
 }
+
 func NewController() *controller {
-return &controller{userSvc: service.NewuserService()}
+	return &controller{userSvc: service.NewuserService()}
 }

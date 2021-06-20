@@ -6,4 +6,3 @@ type User struct {
 	LastName     string `json:"lastName"`
 	Entitlements string `json:"entitlements,omitempty"`
 }
-

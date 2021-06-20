@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	_ "github.com/lib/pq"
 	"net/url"
 	Config "usermvc/config"
 	"usermvc/entity"
-	_ "github.com/lib/pq"
 )
-
 
 type UserRepo interface {
 	Create(context context.Context, user entity.User) error
@@ -20,17 +19,17 @@ type userRepo struct {
 }
 
 func NewUserRepo() *userRepo {
-	newDb,err := newDb()
+	newDb, err := newDb()
 	if err != nil {
 		panic(err)
 	}
 	newDb.AutoMigrate(&entity.User{})
 	return &userRepo{
-		db : newDb,
+		db: newDb,
 	}
 }
 
-func newDb () (*gorm.DB, error) {
+func newDb() (*gorm.DB, error) {
 	conf := Config.NewDbConfig()
 	dsn := url.URL{
 		User:     url.UserPassword(conf.User, conf.Password),
@@ -43,12 +42,12 @@ func newDb () (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	return db,nil
+	return db, nil
 }
 
-func (u userRepo) Create(context context.Context, user entity.User) error  {
-if err := u.db.Create(user).Error; err!= nil{
-	return err
-}
+func (u userRepo) Create(context context.Context, user entity.User) error {
+	if err := u.db.Create(user).Error; err != nil {
+		return err
+	}
 	return nil
 }

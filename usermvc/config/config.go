@@ -1,4 +1,3 @@
-
 //Config/Database.go
 package Config
 
@@ -7,35 +6,35 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/spf13/viper"
 )
+
 var DB *gorm.DB
+
 // DBConfig represents db configuration
 var (
-	configDir = ""
-	configfile = ""
+	configDir      = ""
+	configfile     = ""
 	configFileType = ""
-
 )
 var (
 	Config *AppConfig
 )
+
 type dBConfig struct {
 	Host     string `json:"host"`
 	Port     int    `json:"port"`
 	User     string `json:"user"`
-	DBName   string  `json:"db_name"`
-	Password string   `json:"password"`
-
+	DBName   string `json:"db_name"`
+	Password string `json:"password"`
 }
 
 type AppConfig struct {
-	App *appcofig
+	App      *appcofig
 	DbConfig *dBConfig
 }
 
-
 type appcofig struct {
-	Host string   `json:"host"`
-	Port int       `json:"port"`
+	Host string `json:"host"`
+	Port int    `json:"port"`
 }
 
 func LoadConfig() *AppConfig {
@@ -68,11 +67,10 @@ func LoadConfig() *AppConfig {
 	//fmt.Println("Port is\t\t", configuration.DbConfig.Port)
 	//fmt.Println("Port is\t\t", configuration.DbConfig.User)
 
-
 	return &configuration
 }
 
-func NewDbConfig() *dBConfig{
+func NewDbConfig() *dBConfig {
 	return &dBConfig{
 		Host:     "localhost",
 		Port:     5432,

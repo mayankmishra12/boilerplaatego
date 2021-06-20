@@ -1,9 +1,9 @@
 package middleware
 
 import (
-"fmt"
+	"fmt"
 
-"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -23,4 +23,3 @@ func CORSMiddleware() gin.HandlerFunc {
 		}
 	}
 }
-
