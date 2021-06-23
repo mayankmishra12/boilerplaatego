@@ -1,11 +1,15 @@
 package controller
 
-import "usermvc/service"
+import (
+	"usermvc/service/account"
+	"usermvc/service/user"
+)
 
 type controller struct {
-	userSvc service.UserService
+	userSvc    user.Service
+	accountSvc account.Service
 }
 
 func NewController() *controller {
-	return &controller{userSvc: service.NewuserService()}
+	return &controller{userSvc: user.NewuserService(), accountSvc: account.NewAccountService()}
 }

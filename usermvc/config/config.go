@@ -9,11 +9,17 @@ import (
 
 var DB *gorm.DB
 
+const (
+	APP_ENV     = "APP_ENV"
+	PRODUCTION  = "production"
+	DEVELOPMENT = "development"
+)
+
 // DBConfig represents db configuration
 var (
-	configDir      = ""
-	configfile     = ""
-	configFileType = ""
+	configDir      = "./../config"
+	configfile     = "developement"
+	configFileType = "yaml"
 )
 var (
 	Config *AppConfig
@@ -30,6 +36,15 @@ type dBConfig struct {
 type AppConfig struct {
 	App      *appcofig
 	DbConfig *dBConfig
+	Logger   *logger
+}
+type logger struct {
+	Filename   string `json:"filename"`
+	MaxSize    int    `json:"max_size"`
+	MaxAge     int    `json:"max_age"`
+	MaxBackups int    `json:"max_backups"`
+	LocalTime  bool   `json:"local_time"`
+	Compress   bool   `json:"compress"`
 }
 
 type appcofig struct {
@@ -38,35 +53,27 @@ type appcofig struct {
 }
 
 func LoadConfig() *AppConfig {
-	viper.SetConfigName("conf")
 
-	// Set the path to look for the configurations file
-	viper.AddConfigPath("./config")
-
-	// Enable VIPER to read Environment Variables
 	viper.AutomaticEnv()
-
-	viper.SetConfigType("yml")
+	env := viper.Get(APP_ENV)
+	if env == PRODUCTION {
+		configfile = PRODUCTION
+	}
+	fmt.Println("priting env is golang", env)
+	viper.SetConfigName(configfile)
+	viper.AddConfigPath(configDir)
+	viper.SetConfigType(configFileType)
 	var configuration AppConfig
-
 	if err := viper.ReadInConfig(); err != nil {
 		fmt.Printf("Error reading config file, %s", err)
 	}
-
-	// Set undefined variables
 	viper.SetDefault("database.dbname", "test_db")
-
 	err := viper.Unmarshal(&configuration)
 	if err != nil {
 		fmt.Printf("Unable to decode into struct, %v", err)
 	}
 
-	// Reading variables using the model
 	fmt.Println("Reading variables using the model..")
-	//fmt.Println("Database is\t", configuration.DbConfig.Host)
-	//fmt.Println("Port is\t\t", configuration.DbConfig.Port)
-	//fmt.Println("Port is\t\t", configuration.DbConfig.User)
-
 	return &configuration
 }
 
@@ -79,7 +86,3 @@ func NewDbConfig() *dBConfig {
 		Password: "",
 	}
 }
-
-//Db should be access through scret in which taken from env
-// logger should be middleware
-//

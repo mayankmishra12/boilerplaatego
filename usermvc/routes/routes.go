@@ -15,6 +15,7 @@ func SetupRouter() *gin.Engine {
 
 	{
 		grp1.POST("user", controller.CreateUser)
+		grp1.POST("account",controller.InsertAccountDetails )
 
 	}
 	return r

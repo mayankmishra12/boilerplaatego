@@ -7,6 +7,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
 	"path/filepath"
+	"usermvc/globals"
 
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
@@ -18,11 +19,7 @@ type key string
 
 const (
 	_callerKey = "caller"
-	_requestID  = "requestID"
-
-	// skipOneCaller denotes the number of frames to be skipped
-	// to get the caller two level above in the stack
-	_skipOneCaller = 2
+	_requestID = "requestID"
 )
 
 // GetLoggerWithContext returns a global logger with Proper CallerName and TranceID
@@ -33,7 +30,6 @@ func GetLoggerWithContext(ctx context.Context) *zap.SugaredLogger {
 	return zap.S().With(_requestID, getrequestID(ctx))
 }
 
-// getTraceID returns traceID from the context
 func getrequestID(ctx context.Context) string {
 	traceID := ctx.Value(key(_requestID))
 	if traceID != nil {
@@ -43,15 +39,11 @@ func getrequestID(ctx context.Context) string {
 	return ""
 }
 
-// SetTraceID sets trace ID to context for logging purpose
-// TraceID is being set on the best effort basis, there can be scenario
-// where we are not able to set a traceID and proceed with empty traceID
 func SetRequestID(ctx context.Context) context.Context {
 	ctx = context.WithValue(ctx, key(_requestID), generateReuestID())
 	return ctx
 }
 
-// generateTraceID generates and return empty trace ID
 func generateReuestID() string {
 	traceID, _ := uuid.NewV4()
 	fmt.Println("printing requestid", traceID)
@@ -65,19 +57,21 @@ func InitLogger() *zap.Logger {
 	config.EncoderConfig.TimeKey = "timestamp"
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	logger, _ := config.Build()
-	logFile := filepath.Join("", "appmanager.log")
-	os.Create(logFile)
+	logFile := filepath.Join("", globals.GetConfig().Logger.Filename)
+	if _, err := os.Create(logFile); err != nil {
+		logger.Panic("error while creating log files")
+	}
+
 	w := zapcore.AddSync(&lumberjack.Logger{
-		Filename:   logFile,
-		MaxSize:    10,
-		MaxAge:     10,
-		MaxBackups: 10,
-		LocalTime:  false,
-		Compress:   false,
+		Filename:   globals.GetConfig().Logger.Filename,
+		MaxSize:    globals.GetConfig().Logger.MaxSize,
+		MaxAge:     globals.GetConfig().Logger.MaxAge,
+		MaxBackups: globals.GetConfig().Logger.MaxBackups,
+		LocalTime:  globals.GetConfig().Logger.LocalTime,
+		Compress:   globals.GetConfig().Logger.Compress,
 	})
 	core := zapcore.NewCore(zapcore.NewJSONEncoder(config.EncoderConfig), w, zap.InfoLevel)
 	logger = zap.New(core, zap.AddCaller())
 	logger.Info("starting logger")
 	return logger
 }
-

@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"context"
@@ -7,21 +7,21 @@ import (
 	"usermvc/repositories/userrepo"
 )
 
-type UserService interface {
+type Service interface {
 	CreateUser(ctx context.Context, resquest model.UserResquest) (*model.UserResponse, error)
 }
 
-type userService struct {
+type service struct {
 	userRepo userrepo.UserRepo
 }
 
-func NewuserService() *userService {
-	return &userService{
+func NewuserService() *service {
+	return &service{
 		userRepo: userrepo.NewUserRepo(),
 	}
 }
 
-func (s userService) CreateUser(ctx context.Context, resquest model.UserResquest) (*model.UserResponse, error) {
+func (s service) CreateUser(ctx context.Context, resquest model.UserResquest) (*model.UserResponse, error) {
 	user := entity.User{
 		Email:        resquest.Email,
 		FirstName:    resquest.FirstName,
