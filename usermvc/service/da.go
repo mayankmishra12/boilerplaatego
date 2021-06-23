@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	host     = "ccl-psql-dev.cclxlbtddgmn.ap-south-1.rds.amazonaws.com"
-	port     = 5432
-	user     = "postgres"
-	password = "jQPALD25tS87FKpQ"
-	dbname   = "ccldevdb"
+	host     = ""
+	port     = 12
+	user     = ""
+	password = "1"
+	dbname   = "1"
 )
 
 type AccountDetails struct {
